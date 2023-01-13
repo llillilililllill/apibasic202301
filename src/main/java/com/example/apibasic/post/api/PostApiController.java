@@ -1,11 +1,14 @@
 package com.example.apibasic.post.api;
 
+import com.example.apibasic.post.entity.PostEntity;
 import com.example.apibasic.post.repository.PostRepository;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
+
+import java.util.List;
 
 // 리소스 : 게시물 (Post)
 /*
@@ -24,36 +27,46 @@ public class PostApiController {
     // PostRepository에게 의존하는 관계
     private final PostRepository postRepository;
 
-    // 생성자 주입
-    // @Autowired     // 스프링 컨테이너에게 의존객체를 자동주입해달라., 스프링 4 이후부터는 생성자가 1개일시 생략가능
+    //@Autowired // 스프링 컨테이너에게 의존객체를 자동주입해달라
 //    public PostApiController(PostRepository postRepository) {
 //        this.postRepository = postRepository;
 //    }
 
-    // SETTER 주입은 쓰면 안됨 (불변성 위반)
-//    public void setPostRepository(PostRepository postRepository) {
-//        this.postRepository = postRepository;
-//    }
 
     // 게시물 목록 조회
     @GetMapping
     public ResponseEntity<?> list() {
         log.info("/posts GET request");
-        return null;
+        List<PostEntity> list = postRepository.findAll();
+        return ResponseEntity
+                .ok()
+                .body(list)
+                ;
     }
 
     // 게시물 개별 조회
     @GetMapping("/{postNo}")
     public ResponseEntity<?> detail(@PathVariable Long postNo) {
         log.info("/posts/{} GET request", postNo);
-        return null;
+
+        PostEntity post = postRepository.findOne(postNo);
+        return ResponseEntity
+                .ok()
+                .body(post)
+                ;
     }
 
     // 게시물 등록
     @PostMapping
-    public ResponseEntity<?> create() {
+    public ResponseEntity<?> create(@RequestBody PostEntity entity) {
         log.info("/posts POST request");
-        return null;
+        log.info("게시물 정보: {}", entity);
+
+        boolean flag = postRepository.save(entity);
+        return flag
+                ? ResponseEntity.ok().body("INSERT-SUCCESS")
+                : ResponseEntity.badRequest().body("INSERT-FAIL")
+                ;
     }
 
     // 게시물 수정

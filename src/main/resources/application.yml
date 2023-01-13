@@ -7,9 +7,7 @@ logging:
   level:
     root: warn
     com:
-      example:
-        apibasic:
-          req: trace
+      example: trace
 
 #spring.datasource.url=
 #spring.datasource.username=
