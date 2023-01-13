@@ -13,6 +13,8 @@ import java.util.List;
 @EqualsAndHashCode
 @Builder
 public class PostEntity {
+    
+    public static long sequence = 1L;   // 연속된 일련번호
 
     private Long postNo; // 게시물 식별번호
     private String writer; // 작성자
