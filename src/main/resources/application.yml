@@ -3,6 +3,14 @@
 server:
   port: 8181
 
+logging:
+  level:
+    root: warn
+    com:
+      example:
+        apibasic:
+          req: trace
+
 #spring.datasource.url=
 #spring.datasource.username=
 #spring.datasource.pasword=
