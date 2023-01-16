@@ -1,6 +1,7 @@
 package com.example.apibasic.post.dto;
 
 import com.example.apibasic.post.entity.PostEntity;
+import io.swagger.v3.oas.annotations.Parameter;
 import lombok.*;
 
 import javax.validation.constraints.Max;
