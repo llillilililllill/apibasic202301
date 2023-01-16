@@ -13,6 +13,7 @@ import java.time.LocalDateTime;
 @NoArgsConstructor
 @AllArgsConstructor
 @EqualsAndHashCode(of = "userId")
+@Builder
 // JPA
 @Entity // JPA의 Entity
 @Table(name = "tbl_member")
