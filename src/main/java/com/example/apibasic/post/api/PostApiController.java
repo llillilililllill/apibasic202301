@@ -39,8 +39,9 @@ public class PostApiController {
 
     // 게시물 목록 조회
     @GetMapping
-    public ResponseEntity<?> list() {
+    public ResponseEntity<?> list(PageRequestDTO pageRequestDTO) {
         log.info("/posts GET request");
+        log.info("request page info - {}", pageRequestDTO);
 
         try {
             PostListResponseDTO listResponseDTO = postService.getList();
