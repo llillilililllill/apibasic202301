@@ -75,7 +75,7 @@ class MemberRepositoryTest {
         // when : 실제 테스트 상황
         memberRepository.save(saveMember);  // insert쿼리 실행
 
-        Optional<MemberEntity> foundMember = memberRepository.findById(1L);// pk기반 단일 행 조회
+        Optional<MemberEntity> foundMember = memberRepository.findById(4L);// pk기반 단일 행 조회
 
         // then : 테스트 결과 단언
         // 회원이 조회되었을 것이다
@@ -146,11 +146,12 @@ class MemberRepositoryTest {
         Gender newGender = FEMALE;
 
         // when
-        // JPA에서 수정은 조회 후 setter로 변경
+        // JPA에서 수정은 조회 후 setter로 변경 후 다시 세이브
         Optional<MemberEntity> foundMember = memberRepository.findById(userCode);
         foundMember.ifPresent(m -> {
             m.setNickname(newNickName);
             m.setGender(newGender);
+            memberRepository.save(m);
         });
 
         Optional<MemberEntity> modifiedMember = memberRepository.findById(userCode);

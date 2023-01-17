@@ -7,7 +7,6 @@ import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.stereotype.Service;
 
-import java.time.LocalDateTime;
 import java.util.List;
 
 import static java.util.stream.Collectors.toList;
@@ -43,40 +42,53 @@ public class PostService {
 
     // 개별 조회 중간처리
     public PostDetailResponseDTO getDetail(Long postNo) {
-        PostEntity post = postRepository.findOne(postNo);
-
-        if (post == null) throw new RuntimeException(postNo + "번 게시물이 존재하지 않음!!");
+        PostEntity post = postRepository
+                .findById(postNo)
+                .orElseThrow(() ->
+                new RuntimeException(
+                        postNo + "번 게시물이 존재하지 않음!!"
+                ));
 
         // 엔터티를 DTO로 변환
         return new PostDetailResponseDTO(post);
     }
 
     // 등록 중간처리
-    public boolean insert(final PostCreateDTO createDTO) {
+    public PostDetailResponseDTO insert(final PostCreateDTO createDTO)
+        throws RuntimeException {
         // dto를 entity변환 작업
         final PostEntity entity = createDTO.toEntity();
 
-        return postRepository.save(entity);
+        PostEntity savedPost = postRepository.save(entity);
+        return new PostDetailResponseDTO(savedPost);
     }
 
     // 수정 중간 처리
-    public boolean update(final Long postNo, final PostModifyDTO modifyDTO) {
+    public PostDetailResponseDTO update(final Long postNo, final PostModifyDTO modifyDTO)
+        throws RuntimeException {
         // 수정 전 데이터 조회하기
-        final PostEntity entity = postRepository.findOne(postNo);
+        PostEntity entity = postRepository.
+                findById(postNo)
+                .orElseThrow(() ->
+                        new RuntimeException(
+                                postNo + "수정 전 데이터가 존재하지 않습니다."
+                        ));
         // 수정 진행
         String modTitle = modifyDTO.getTitle();
         String modContent = modifyDTO.getContent();
 
         if (modTitle != null) entity.setTitle(modTitle);
         if (modContent != null) entity.setContent(modContent);
-        entity.setModifyDate(LocalDateTime.now());
+//        entity.setModifyDate(LocalDateTime.now());
 
-        return postRepository.save(entity);
+        PostEntity modifyPost = postRepository.save(entity);
+        return new PostDetailResponseDTO(modifyPost);
     }
 
     // 삭제 중간처리
-    public boolean delete(final Long postNo) {
-        return postRepository.delete(postNo);
+    public void delete(final Long postNo)
+    throws RuntimeException {
+        postRepository.deleteById(postNo);
     }
 }
 

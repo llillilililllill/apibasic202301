@@ -1,6 +1,5 @@
 package com.example.apibasic.post.dto;
 
-import com.example.apibasic.post.entity.PostEntity;
 import lombok.*;
 
 @Setter @Getter @ToString
