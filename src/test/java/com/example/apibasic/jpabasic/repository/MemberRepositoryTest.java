@@ -15,6 +15,7 @@ import java.util.List;
 import java.util.Optional;
 
 import static com.example.apibasic.jpabasic.entity.Gender.FEMALE;
+import static com.example.apibasic.jpabasic.entity.Gender.MALE;
 import static org.junit.jupiter.api.Assertions.*;
 
 // junit5에서는 클래스, 메서드, 필드 default제한만을 허용
@@ -38,20 +39,36 @@ class MemberRepositoryTest {
         MemberEntity saveMember2 = MemberEntity.builder()
                 .account("zzz2")
                 .password("1234")
-                .nickname("꾸러기2")
-                .gender(Gender.MALE)
+                .nickname("박꾸러기2")
+                .gender(MALE)
                 .build();
 
         MemberEntity saveMember3 = MemberEntity.builder()
                 .account("zzz3")
                 .password("1234")
                 .nickname("꾸러기3")
-                .gender(Gender.MALE)
+                .gender(MALE)
+                .build();
+
+        MemberEntity saveMember4 = MemberEntity.builder()
+                .account("zzz4")
+                .password("1234")
+                .nickname("박꾸러기4")
+                .gender(Gender.FEMALE)
+                .build();
+
+        MemberEntity saveMember5 = MemberEntity.builder()
+                .account("zzz5")
+                .password("1234")
+                .nickname("꾸러기5")
+                .gender(MALE)
                 .build();
 
         memberRepository.save(saveMember1);
         memberRepository.save(saveMember2);
         memberRepository.save(saveMember3);
+        memberRepository.save(saveMember4);
+        memberRepository.save(saveMember5);
 
     }
 
@@ -160,5 +177,94 @@ class MemberRepositoryTest {
         assertEquals("닭강정", modifiedMember.get().getNickname());
         assertEquals(FEMALE, modifiedMember.get().getGender());
 
+    }
+
+    @Test
+    @DisplayName("쿼리메서드를 사용하여 여성회원만 조회해야 한다.")
+    void findByGenderTest() {
+        // given
+        Gender gender = FEMALE;
+        // when
+        List<MemberEntity> list = memberRepository.findByGender(gender);
+        // then
+        list.forEach(m -> {
+            System.out.println(m);
+            assertTrue(m.getGender() == FEMALE);
+        });
+    }
+
+    @Test
+    @DisplayName("쿼리메서드를 사용하여 계정명이 zzz5 이면서 남성회원인 사람만 조회해야 한다.")
+    void findByAccountAndGenderTest() {
+        // given
+        String account = "zzz5";
+        Gender gender = MALE;
+        // when
+        List<MemberEntity> list = memberRepository.findByAccountAndGender(account, gender);
+        // then
+        list.forEach(m -> {
+            System.out.println(m);
+            assertTrue(m.getGender() == MALE);
+            assertEquals("zzz5", m.getAccount());
+        });
+    }
+
+    @Test
+    @DisplayName("쿼리메서드를 사용하여 이름에 '박'이 포함된 회원만 조회해야 한다.")
+    void findByNickNameContainingTest() {
+        // given
+        String nickname = "박";
+        // when
+        List<MemberEntity> list
+                = memberRepository.findByNicknameContaining(nickname);
+        // then
+        list.forEach(m -> {
+            System.out.println(m);
+            assertTrue(m.getNickname().contains("박"));
+        });
+    }
+
+    @Test
+    @DisplayName("JPQL을 사용하여 계정명이 zzz1인 회원을 조회해야 한다.")
+    void jpqlTest1() {
+        // given
+        String account = "zzz1";
+        // when
+        MemberEntity member = memberRepository.getMemberByAccount(account);
+        // then
+        System.out.println("member = " + member);
+        assertEquals("꾸러기1", member.getNickname()  );
+    }
+
+    @Test
+    @DisplayName("JPQL을 사용해서 닉네임이 꾸러기3이면서 성별이 남성인 회원을 조회해야 한다.")
+    void jpqlTest2() {
+        // given
+        String nickname = "꾸러기3";
+        Gender gender = MALE;
+        // when
+        List<MemberEntity> list
+                = memberRepository.getMembersByNickAndGender(nickname, gender);
+        // then
+        list.forEach(m -> {
+            System.out.println(m);
+            assertEquals("꾸러기3", m.getNickname());
+            assertEquals(MALE, m.getGender());
+        });
+    }
+
+    @Test
+    @DisplayName("JPQL을 사용하여 닉네임에 '박'이 포함된 회원만 조회해야 한다.")
+    void jpqlTest3() {
+        // given
+        String nickname = "박";
+        // when
+        List<MemberEntity> list
+                = memberRepository.getMembersByNickName(nickname);
+        // then
+        list.forEach(m -> {
+            System.out.println(m);
+            assertTrue(m.getNickname().contains("박"));
+        });
     }
 }
