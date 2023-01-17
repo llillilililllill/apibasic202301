@@ -3,7 +3,9 @@ package com.example.apibasic.jpabasic.repository;
 import com.example.apibasic.jpabasic.entity.Gender;
 import com.example.apibasic.jpabasic.entity.MemberEntity;
 import org.springframework.data.jpa.repository.JpaRepository;
+import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.repository.query.Param;
 
 import java.lang.reflect.Member;
 import java.util.List;
@@ -33,5 +35,9 @@ public interface MemberRepository extends JpaRepository<MemberEntity, Long> {
     List<MemberEntity> getMembersByNickAndGender(String nickname, Gender gender);
 
     @Query("select m from MemberEntity m where m.nickname like %:nick%")
-    List<MemberEntity> getMembersByNickName(String nick);
+    List<MemberEntity> getMembersByNickName(@Param("nick") String nick);
+
+    @Modifying  //수정 삭제 할떄 붙이기
+    @Query("delete from MemberEntity m where m.nickname=:nick")
+    void deleteByNickName(String nick);
 }
