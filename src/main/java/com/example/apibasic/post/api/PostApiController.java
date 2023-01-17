@@ -44,7 +44,7 @@ public class PostApiController {
         log.info("request page info - {}", pageRequestDTO);
 
         try {
-            PostListResponseDTO listResponseDTO = postService.getList();
+            PostListResponseDTO listResponseDTO = postService.getList(pageRequestDTO);
 
             return ResponseEntity
                     .ok()
