@@ -17,4 +17,8 @@ public class HashTagEntity {
     private Long id;
 
     private String tagName;
+
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "post_id")   // FK 컬럼 이름 지정
+    private PostEntity post;
 }
